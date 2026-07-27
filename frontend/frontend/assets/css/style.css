@@ -1,0 +1,1219 @@
+/* =========================================================================
+   MediSafe AI — style.css
+   Premium AI-healthcare theme: gradient mesh background, glassmorphism,
+   soft shadows, animated hover states, blue + green medical palette.
+   ========================================================================= */
+
+:root {
+    --ms-blue: #2F6FED;
+    --ms-blue-dark: #1E4FD1;
+    --ms-blue-light: #EAF1FF;
+    --ms-blue-glow: rgba(47, 111, 237, 0.35);
+    --ms-green: #16A34A;
+    --ms-green-dark: #0F7A38;
+    --ms-green-light: #E9F9EF;
+    --ms-green-glow: rgba(22, 163, 74, 0.30);
+    --ms-amber: #D97706;
+    --ms-amber-light: #FEF3E2;
+    --ms-red: #DC2626;
+    --ms-red-light: #FDECEC;
+    --ms-text: #0B1220;
+    --ms-text-soft: #5B667A;
+    --ms-border: #E7ECF4;
+    --ms-bg: #F5F8FD;
+    --ms-white: #FFFFFF;
+    --ms-shadow: 0 20px 45px rgba(20, 40, 90, 0.10);
+    --ms-shadow-sm: 0 6px 18px rgba(20, 40, 90, 0.07);
+    --ms-shadow-lg: 0 30px 60px rgba(20, 40, 90, 0.16);
+    --ms-radius-lg: 24px;
+    --ms-radius-md: 16px;
+    --ms-radius-sm: 10px;
+}
+
+/* -------------------------------------------------------------------------
+   Base app + gradient mesh background
+   ------------------------------------------------------------------------- */
+.stApp {
+    background:
+        radial-gradient(1100px 550px at 8% -8%, rgba(47, 111, 237, 0.10), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(22, 163, 74, 0.09), transparent 55%),
+        radial-gradient(800px 500px at 50% 100%, rgba(47, 111, 237, 0.06), transparent 60%),
+        var(--ms-bg);
+    font-family: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ms-text);
+}
+
+.block-container {
+    padding-top: 0.5rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1200px;
+}
+
+h1, h2, h3, h4, h5 {
+    color: var(--ms-text);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+p { color: var(--ms-text-soft); }
+
+/* Fade-up entrance animation, applied to primary section wrappers */
+@keyframes msFadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+ .st-key-ms_hero, .st-key-ms_upload_card, .ms-feature-card, .ms-stats-bar, .st-key-ms_about_card,
+.ms-history-card, .st-key-ms_chat_card, .st-key-ms_result_card_ocr,
+.st-key-ms_result_card_not_detected, .st-key-ms_result_card_search, .ms-country-card {
+    animation: msFadeUp 0.5s ease both;
+}
+
+/* -------------------------------------------------------------------------
+   Top Navigation Bar
+   ------------------------------------------------------------------------- */
+.st-key-ms_navbar {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-md);
+    padding: 10px 18px;
+    margin-bottom: 18px;
+    box-shadow: var(--ms-shadow-sm);
+    position: sticky;
+    top: 8px;
+    z-index: 999;
+}
+
+.ms-logo {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--ms-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    padding-top: 6px;
+}
+
+.ms-logo span { color: var(--ms-blue); }
+.ms-logo-accent { color: var(--ms-green) !important; }
+
+.ms-logo-mark {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 5px var(--ms-blue-glow));
+}
+
+.ms-site-footer-brand .ms-logo-mark {
+    width: 22px;
+    height: 22px;
+    margin-right: 4px;
+    vertical-align: -4px;
+}
+
+.st-key-ms_navbar div[data-testid="stButton"] > button {
+    background: transparent !important;
+    border: none !important;
+    color: var(--ms-text-soft) !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+    padding: 8px 10px !important;
+}
+
+.st-key-ms_navbar div[data-testid="stButton"] > button:hover {
+    color: var(--ms-blue) !important;
+    transform: none;
+}
+
+.st-key-ms_navbar div[data-testid="stButton"] > button[kind="primary"],
+.st-key-ms_navbar div[data-testid="stButton"] > button[kind="primary"]:focus,
+.st-key-ms_navbar div[data-testid="stButton"] > button[kind="primary"]:focus:not(:active),
+.st-key-ms_navbar div[data-testid="stButton"] > button[kind="primary"]:active {
+    background: linear-gradient(135deg, var(--ms-blue-light), #dcebff) !important;
+    color: var(--ms-blue-dark) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 14px var(--ms-blue-glow) !important;
+}
+
+.st-key-ms_navbar div[data-testid="stButton"] > button[kind="primary"] p,
+.st-key-ms_navbar div[data-testid="stButton"] > button[kind="primary"] span,
+.st-key-ms_navbar div[data-testid="stButton"] > button[kind="primary"] div {
+    color: var(--ms-blue-dark) !important;
+    opacity: 1 !important;
+}
+
+/* -------------------------------------------------------------------------
+   Buttons (global)
+   ------------------------------------------------------------------------- */
+div[data-testid="stButton"] > button {
+    border-radius: 13px;
+    font-weight: 800 !important;
+    font-size: 0.98rem !important;
+    letter-spacing: 0.01em;
+    transition: all 0.18s cubic-bezier(.2,.8,.2,1);
+}
+
+div[data-testid="stButton"] > button[kind="primary"],
+div[data-testid="stButton"] > button[kind="primary"]:focus,
+div[data-testid="stButton"] > button[kind="primary"]:focus:not(:active),
+div[data-testid="stButton"] > button[kind="primary"]:active {
+    background: linear-gradient(135deg, var(--ms-blue-dark) 0%, var(--ms-green-dark) 130%) !important;
+    color: #FFFFFF !important;
+    font-weight: 900 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    border: none !important;
+    box-shadow: 0 10px 26px var(--ms-blue-glow);
+}
+
+div[data-testid="stButton"] > button[kind="primary"] p,
+div[data-testid="stButton"] > button[kind="primary"] span,
+div[data-testid="stButton"] > button[kind="primary"] div {
+    color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+div[data-testid="stButton"] > button[kind="primary"]:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 18px 36px var(--ms-blue-glow);
+}
+
+div[data-testid="stButton"] > button[kind="secondary"] {
+    background: var(--ms-white);
+    color: var(--ms-text);
+    border: 1px solid var(--ms-border);
+}
+
+div[data-testid="stButton"] > button[kind="secondary"]:hover {
+    border-color: var(--ms-blue);
+    color: var(--ms-blue);
+    transform: translateY(-1px);
+}
+
+/* Hero CTA row: button + Recommended badge aligned */
+.ms-cta-row div[data-testid="stHorizontalBlock"] { align-items: center; }
+
+.ms-recommended-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: linear-gradient(135deg, var(--ms-green-light), #d5f5e0);
+    color: var(--ms-green-dark);
+    font-weight: 900;
+    font-size: 0.92rem;
+    letter-spacing: 0.01em;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid #bdf0cf;
+    height: 100%;
+    text-align: center;
+    box-shadow: 0 6px 16px var(--ms-green-glow);
+}
+
+/* Analyze Medicine button — scoped emphasis + soft glow (primary CTA of the page) */
+.st-key-analyze_wrap { margin-top: 8px; }
+
+@keyframes msSoftGlow {
+    0%, 100% { box-shadow: 0 14px 30px var(--ms-blue-glow); }
+    50% { box-shadow: 0 14px 40px var(--ms-green-glow); }
+}
+
+.st-key-analyze_wrap div[data-testid="stButton"] > button {
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.02em;
+    padding: 1.05rem 1rem !important;
+    border-radius: 15px !important;
+    animation: msSoftGlow 3.2s ease-in-out infinite;
+}
+
+.st-key-analyze_wrap div[data-testid="stButton"] > button:hover {
+    transform: translateY(-3px) scale(1.01);
+    animation-play-state: paused;
+    box-shadow: 0 22px 42px var(--ms-blue-glow) !important;
+}
+
+/* -------------------------------------------------------------------------
+   Form labels — bold, confident
+   ------------------------------------------------------------------------- */
+div[data-testid="stFileUploader"] label p,
+div[data-testid="stTextInput"] label p,
+div[data-testid="stRadio"] > label p {
+    font-weight: 800 !important;
+    font-size: 1.02rem !important;
+    color: var(--ms-text) !important;
+    letter-spacing: -0.01em;
+}
+
+div[data-testid="stRadio"] label { font-weight: 700 !important; }
+
+div[data-testid="stRadio"] > div { gap: 10px; }
+
+div[data-testid="stRadio"] label {
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    padding: 9px 18px;
+    border-radius: 999px;
+    box-shadow: var(--ms-shadow-sm);
+}
+
+div[data-testid="stTextInput"] input {
+    border-radius: 13px !important;
+    border: 1px solid var(--ms-border) !important;
+    padding: 11px 15px !important;
+    background: var(--ms-white) !important;
+    color: var(--ms-text) !important;
+}
+
+/* Force light styling on the input's wrapper too — some Streamlit/
+   browser dark-theme combinations paint this container dark even
+   though the `input` element above is transparent, which is what
+   made the search box render as a solid black pill. */
+div[data-testid="stTextInput"] > div,
+div[data-testid="stTextInput"] > div > div,
+div[data-baseweb="input"],
+div[data-baseweb="base-input"] {
+    background: var(--ms-white) !important;
+    border-color: var(--ms-border) !important;
+}
+
+div[data-testid="stSelectbox"] > div {
+    border-radius: 13px !important;
+}
+
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    border-radius: 13px !important;
+    border: 1px solid var(--ms-border) !important;
+    background: var(--ms-white) !important;
+    color: var(--ms-text) !important;
+}
+
+/* The dropdown menu that opens on click renders in a portal outside
+   the normal DOM tree, so it needs its own light-theme override. */
+div[data-baseweb="popover"] ul[role="listbox"],
+div[data-baseweb="popover"] li {
+    background: var(--ms-white) !important;
+    color: var(--ms-text) !important;
+}
+
+div[data-baseweb="popover"] li:hover {
+    background: var(--ms-blue-light) !important;
+}
+
+/* -------------------------------------------------------------------------
+   Top tagline banner (above the hero)
+   ------------------------------------------------------------------------- */
+.ms-tagline-banner {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--ms-blue-dark);
+    background: linear-gradient(90deg, var(--ms-blue-light), var(--ms-green-light));
+    border: 1px solid var(--ms-border);
+    border-radius: 999px;
+    padding: 10px 18px;
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+}
+
+/* -------------------------------------------------------------------------
+   Hero Section
+   ------------------------------------------------------------------------- */
+.st-key-ms_hero {
+    position: relative;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: var(--ms-radius-lg);
+    padding: 34px 40px;
+    box-shadow: var(--ms-shadow-lg);
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.st-key-ms_hero::before {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, var(--ms-blue-glow), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.st-key-ms_hero::after {
+    content: "";
+    position: absolute;
+    bottom: -140px;
+    left: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, var(--ms-green-glow), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.ms-hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--ms-green-light), #d5f5e0);
+    color: var(--ms-green-dark);
+    font-weight: 800;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    border: 1px solid #bdf0cf;
+}
+
+.ms-hero-title {
+    font-size: 3.2rem;
+    line-height: 1.04;
+    margin: 0 0 4px 0;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--ms-text) 30%, var(--ms-blue-dark) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.ms-accent {
+    background: linear-gradient(90deg, var(--ms-blue), var(--ms-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ms-hero-subtitle {
+    font-size: 1.6rem;
+    color: var(--ms-text);
+    font-weight: 800;
+    margin: 0 0 12px 0;
+}
+
+.ms-hero-text {
+    font-size: 1.02rem;
+    color: var(--ms-text-soft);
+    max-width: 500px;
+    margin-bottom: 18px;
+    line-height: 1.6;
+}
+
+.ms-hero-tags {
+    margin-top: 12px;
+    color: var(--ms-text-soft);
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+/* -------------------------------------------------------------------------
+   Stats bar (Home)
+   ------------------------------------------------------------------------- */
+.ms-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-lg);
+    box-shadow: var(--ms-shadow);
+    margin: 0 0 22px 0;
+    overflow: hidden;
+}
+
+.ms-stat {
+    text-align: center;
+    padding: 20px 12px;
+    border-right: 1px solid var(--ms-border);
+}
+.ms-stat:last-child { border-right: none; }
+
+.ms-stat-number {
+    font-size: 1.9rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--ms-blue), var(--ms-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ms-stat-label {
+    font-size: 0.82rem;
+    color: var(--ms-text-soft);
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* -------------------------------------------------------------------------
+   Section titles
+   ------------------------------------------------------------------------- */
+.ms-section-title {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 900;
+    margin: 4px 0 18px 0;
+}
+
+.ms-page-title {
+    font-size: 2.15rem;
+    font-weight: 900;
+    margin-bottom: 2px;
+}
+
+.ms-icon-img {
+    display: inline-block;
+    vertical-align: -0.15em;
+    object-fit: contain;
+}
+
+.ms-page-title .ms-icon-img.ms-icon-clock {
+    width: 1.7rem;
+    height: 1.7rem;
+    vertical-align: -0.25em;
+}
+
+.ms-history-meta .ms-icon-img.ms-icon-clock {
+    width: 0.95em;
+    height: 0.95em;
+    vertical-align: -0.1em;
+}
+
+.ms-page-subtitle {
+    color: var(--ms-text-soft);
+    margin-bottom: 14px;
+    font-size: 1.02rem;
+}
+
+/* -------------------------------------------------------------------------
+   Feature cards (Home)
+   ------------------------------------------------------------------------- */
+.ms-feature-card {
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-md);
+    padding: 26px 18px;
+    text-align: center;
+    box-shadow: var(--ms-shadow-sm);
+    height: 100%;
+    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease;
+}
+
+.ms-feature-card:hover {
+    transform: translateY(-7px) scale(1.015);
+    box-shadow: var(--ms-shadow-lg);
+}
+
+.ms-feature-icon {
+    width: 56px;
+    height: 56px;
+    line-height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--ms-blue-light), #dcebff);
+    font-size: 1.5rem;
+    margin: 0 auto 16px auto;
+}
+
+.ms-feature-icon.has-image {
+    background: transparent;
+}
+
+.ms-feature-icon-img {
+    display: block;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: var(--ms-shadow-sm);
+}
+
+.ms-feature-title {
+    font-weight: 800;
+    font-size: 1.04rem;
+    margin-bottom: 6px;
+    color: var(--ms-text);
+}
+
+.ms-feature-desc {
+    font-size: 0.88rem;
+    color: var(--ms-text-soft);
+    line-height: 1.45;
+}
+
+/* -------------------------------------------------------------------------
+   Generic card wrapper
+   ------------------------------------------------------------------------- */
+.st-key-ms_upload_card {
+    background: linear-gradient(180deg, #ffffff, #fbfdff);
+    border: 1px solid rgba(47, 111, 237, 0.18);
+    border-radius: var(--ms-radius-lg);
+    padding: 26px;
+    box-shadow: var(--ms-shadow);
+    margin-bottom: 18px;
+}
+
+.st-key-ms_upload_card img {
+    display: block;
+    margin: 0 auto 10px auto;
+}
+
+/* -------------------------------------------------------------------------
+   File uploader — forced to a light theme regardless of Streamlit's
+   internal DOM version, so it never renders as a stark black dropzone.
+   ------------------------------------------------------------------------- */
+div[data-testid="stFileUploader"] {
+    background: transparent !important;
+}
+
+div[data-testid="stFileUploader"] section,
+div[data-testid="stFileUploaderDropzone"],
+div[data-testid="stFileUploaderDropzoneInstructions"] {
+    background: var(--ms-blue-light) !important;
+    border: 2px dashed var(--ms-blue) !important;
+    border-radius: var(--ms-radius-md) !important;
+    color: var(--ms-text) !important;
+}
+
+div[data-testid="stFileUploader"] section:hover,
+div[data-testid="stFileUploaderDropzone"]:hover {
+    background: #dfeaff !important;
+    border-color: var(--ms-blue-dark) !important;
+}
+
+div[data-testid="stFileUploader"] section *,
+div[data-testid="stFileUploaderDropzone"] *,
+div[data-testid="stFileUploaderDropzoneInstructions"] * {
+    color: var(--ms-text) !important;
+}
+
+div[data-testid="stFileUploader"] section small,
+div[data-testid="stFileUploaderDropzone"] small {
+    color: var(--ms-text-soft) !important;
+}
+
+div[data-testid="stFileUploader"] button,
+div[data-testid="stFileUploaderDropzone"] button {
+    background: var(--ms-white) !important;
+    color: var(--ms-blue-dark) !important;
+    border: 1px solid var(--ms-blue) !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+
+div[data-testid="stFileUploader"] button:hover,
+div[data-testid="stFileUploaderDropzone"] button:hover {
+    background: var(--ms-blue-light) !important;
+    border-color: var(--ms-blue-dark) !important;
+}
+
+/* -------------------------------------------------------------------------
+   Scan Medicine — integrated search bar with camera-toggle icon
+   ------------------------------------------------------------------------- */
+.st-key-ms_search_bar_row {
+    background: var(--ms-bg);
+    border: 1px solid var(--ms-border);
+    border-radius: 999px;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 1px 3px rgba(20, 40, 90, 0.05);
+}
+
+.st-key-ms_search_bar_row div[data-testid="stHorizontalBlock"] {
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.st-key-ms_search_bar_row div[data-testid="stTextInput"] input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 10px 14px !important;
+    font-weight: 600;
+}
+
+.st-key-ms_search_bar_row div[data-testid="stTextInput"] input:focus {
+    box-shadow: none !important;
+}
+
+.st-key-ms_search_bar_row div[data-testid="stFileUploader"] section,
+.st-key-ms_search_bar_row div[data-testid="stFileUploaderDropzone"] {
+    border-radius: 999px !important;
+    padding: 6px 14px !important;
+}
+
+.st-key-ms_search_bar_row div[data-testid="stButton"] > button {
+    width: 44px;
+    height: 44px;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background: var(--ms-white) !important;
+    color: var(--ms-blue-dark) !important;
+    border: 1px solid var(--ms-border) !important;
+    font-size: 1.15rem !important;
+    box-shadow: var(--ms-shadow-sm) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.st-key-ms_search_bar_row div[data-testid="stButton"] > button:hover {
+    border-color: var(--ms-blue) !important;
+    color: var(--ms-blue) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* -------------------------------------------------------------------------
+   How it works strip
+   ------------------------------------------------------------------------- */
+.st-key-ms_steps_wrap {
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-lg);
+    padding: 22px 26px;
+    box-shadow: var(--ms-shadow-sm);
+    margin-bottom: 18px;
+}
+
+.ms-steps-title {
+    text-align: center;
+    font-weight: 900;
+    font-size: 1.12rem;
+    margin-bottom: 14px;
+}
+
+.ms-step { text-align: center; padding: 6px 8px; }
+
+.ms-step-icon {
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, var(--ms-green-light), #d5f5e0);
+    color: var(--ms-green-dark);
+    font-weight: 900;
+    margin: 0 auto 10px auto;
+    font-size: 1.15rem;
+}
+
+.ms-step-title { font-weight: 800; font-size: 0.92rem; margin-bottom: 4px; }
+.ms-step-desc { font-size: 0.79rem; color: var(--ms-text-soft); }
+
+/* -------------------------------------------------------------------------
+   Result containers (native st.container(border=True))
+   ------------------------------------------------------------------------- */
+div[data-testid="stVerticalBlockBorderWrapper"] {
+    border-radius: var(--ms-radius-lg) !important;
+    border: 1px solid var(--ms-border) !important;
+    box-shadow: var(--ms-shadow);
+    background: var(--ms-white);
+}
+
+div[data-testid="stAlert"] {
+    border-radius: 12px;
+    background: var(--ms-blue-light);
+    border: 1px solid #d5e4ff;
+    font-weight: 700;
+}
+
+div[data-testid="stExpander"] {
+    border-radius: 13px !important;
+    border: 1px solid var(--ms-border) !important;
+    overflow: hidden;
+}
+
+/* -------------------------------------------------------------------------
+   Status badges + demo country/result cards (Scan Medicine result page)
+   ------------------------------------------------------------------------- */
+.ms-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 800;
+    font-size: 0.78rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+}
+
+.ms-badge-allowed { background: var(--ms-green-light); color: var(--ms-green-dark); }
+.ms-badge-restricted { background: var(--ms-amber-light); color: var(--ms-amber); }
+.ms-badge-required { background: var(--ms-blue-light); color: var(--ms-blue-dark); }
+.ms-badge-banned { background: var(--ms-red-light); color: var(--ms-red); }
+.ms-badge-neutral { background: #EEF1F6; color: var(--ms-text-soft); }
+
+.st-key-ms_result_card_ocr,
+.st-key-ms_result_card_not_detected,
+.st-key-ms_result_card_search {
+    background: linear-gradient(180deg, #ffffff, #fbfdff);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-lg);
+    padding: 26px 28px;
+    box-shadow: var(--ms-shadow);
+    margin-bottom: 22px;
+}
+
+.ms-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.ms-result-name {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--ms-text);
+}
+
+.ms-country-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.ms-country-card {
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: var(--ms-shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ms-country-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ms-shadow);
+}
+
+.ms-country-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.ms-country-name {
+    font-weight: 800;
+    font-size: 0.96rem;
+    color: var(--ms-text);
+}
+
+.ms-country-detail {
+    font-size: 0.83rem;
+    color: var(--ms-text-soft);
+    line-height: 1.5;
+    margin-top: 4px;
+}
+
+.ms-country-detail strong {
+    color: var(--ms-text);
+    font-weight: 700;
+}
+
+.ms-confidence-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.ms-confidence-track {
+    flex: 1;
+    height: 6px;
+    background: var(--ms-border);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.ms-confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ms-blue), var(--ms-green));
+    border-radius: 999px;
+}
+
+.ms-confidence-label {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--ms-text-soft);
+    white-space: nowrap;
+}
+
+.ms-backend-pending {
+    background: var(--ms-bg);
+    border: 1px dashed var(--ms-border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-top: 14px;
+    font-size: 0.92rem;
+    color: var(--ms-text-soft);
+    font-weight: 600;
+}
+
+/* Suggest Alternative / Know More action row under each country card */
+.ms-card-actions {
+    margin-top: 10px;
+}
+
+.ms-card-actions div[data-testid="stButton"] > button {
+    background: var(--ms-blue-light) !important;
+    border: 1px solid var(--ms-border) !important;
+    color: var(--ms-blue-dark) !important;
+    font-weight: 700 !important;
+    font-size: 0.78rem !important;
+    border-radius: 12px !important;
+    padding: 8px 10px !important;
+}
+
+.ms-card-actions div[data-testid="stButton"] > button:hover {
+    background: var(--ms-blue) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+/* Grounded alternative-suggestion panel (expands under a restricted /
+   banned / prescription-required card) */
+.ms-alt-panel {
+    background: var(--ms-amber-light);
+    border: 1px solid #F3D9AE;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 10px;
+}
+
+.ms-alt-title {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--ms-text);
+    margin-bottom: 8px;
+}
+
+.ms-alt-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ms-alt-chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--ms-white);
+    border: 1px solid var(--ms-green-dark);
+    color: var(--ms-green-dark);
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 5px 11px;
+    border-radius: 999px;
+}
+
+.ms-alt-disclaimer {
+    font-size: 0.76rem;
+    color: var(--ms-amber);
+    font-weight: 700;
+    line-height: 1.45;
+    border-top: 1px dashed #F3D9AE;
+    padding-top: 8px;
+}
+
+/* "Know More" grounding banner shown at the top of the AI Chat page */
+.ms-chat-context-banner {
+    background: var(--ms-blue-light);
+    border: 1px solid var(--ms-border);
+    border-radius: 14px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ms-blue-dark);
+    margin-bottom: 10px;
+}
+
+/* -------------------------------------------------------------------------
+   AI Chat
+   ------------------------------------------------------------------------- */
+.st-key-ms_chat_card {
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-lg);
+    box-shadow: var(--ms-shadow);
+    padding: 10px 6px;
+    margin-bottom: 18px;
+}
+
+div[data-testid="stChatMessage"] { border-radius: 16px; padding: 4px 6px; }
+div[data-testid="stChatInput"] textarea { border-radius: 15px !important; }
+
+.st-key-ms_suggested_q div[data-testid="stButton"] > button {
+    background: var(--ms-bg) !important;
+    border: 1px solid var(--ms-border) !important;
+    color: var(--ms-blue-dark) !important;
+    text-align: left !important;
+    font-weight: 700 !important;
+    border-radius: 13px !important;
+    padding: 11px 15px !important;
+}
+
+.st-key-ms_suggested_q div[data-testid="stButton"] > button:hover {
+    background: var(--ms-blue-light) !important;
+    transform: translateY(-1px);
+}
+
+/* System notice bubble (AI unavailable state) — visually distinct from
+   a real assistant reply so it's never mistaken for AI-generated content */
+.ms-chat-system-notice {
+    text-align: center;
+    background: var(--ms-amber-light);
+    color: var(--ms-amber);
+    border: 1px solid #f6dcb0;
+    border-radius: 14px;
+    padding: 12px 18px;
+    margin: 10px 14px;
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+/* -------------------------------------------------------------------------
+   History filters
+   ------------------------------------------------------------------------- */
+.ms-history-filters {
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-md);
+    padding: 14px 16px;
+    box-shadow: var(--ms-shadow-sm);
+    margin-bottom: 20px;
+}
+
+.ms-history-filters div[data-testid="stTextInput"] input {
+    border-radius: 12px !important;
+}
+
+/* -------------------------------------------------------------------------
+   History
+   ------------------------------------------------------------------------- */
+.ms-history-card {
+    position: relative;
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-left: 4px solid var(--ms-blue);
+    border-radius: var(--ms-radius-md);
+    padding: 16px 20px;
+    box-shadow: var(--ms-shadow-sm);
+    margin-bottom: 14px;
+    transition: transform 0.2s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s ease, border-left-color 0.2s ease;
+}
+
+.ms-history-card:hover {
+    transform: translateX(4px);
+    box-shadow: var(--ms-shadow);
+    border-left-color: var(--ms-green);
+}
+
+.ms-history-name { font-weight: 800; font-size: 1.06rem; color: var(--ms-text); }
+.ms-history-meta { font-size: 0.82rem; color: var(--ms-text-soft); margin-top: 3px; font-weight: 600; }
+
+.ms-history-tag {
+    display: inline-block;
+    background: var(--ms-green-light);
+    color: var(--ms-green-dark);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 999px;
+}
+
+.ms-empty-state { text-align: center; padding: 56px 20px; color: var(--ms-text-soft); }
+.ms-empty-state div.emoji { font-size: 2.6rem; margin-bottom: 10px; }
+.ms-empty-state div.emoji .ms-icon-img.ms-icon-folder { width: 4.4rem; height: auto; vertical-align: middle; }
+
+/* -------------------------------------------------------------------------
+   About page
+   ------------------------------------------------------------------------- */
+.st-key-ms_about_card {
+    background: var(--ms-white);
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-lg);
+    padding: 26px 30px;
+    box-shadow: var(--ms-shadow);
+    margin-bottom: 18px;
+}
+
+.ms-tech-pill {
+    background: linear-gradient(180deg, #ffffff, var(--ms-bg));
+    border: 1px solid var(--ms-border);
+    border-radius: var(--ms-radius-md);
+    text-align: center;
+    padding: 20px 10px;
+    font-weight: 800;
+    font-size: 0.86rem;
+    transition: transform 0.2s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s ease;
+    box-shadow: var(--ms-shadow-sm);
+}
+
+.ms-tech-pill:hover { transform: translateY(-4px); box-shadow: var(--ms-shadow); }
+
+.ms-tech-pill .emoji { font-size: 1.7rem; display: block; margin-bottom: 8px; }
+.ms-tech-pill .ms-tech-icon {
+    display: block;
+    margin: 0 auto 10px auto;
+    height: 34px;
+    width: auto;
+    max-width: 70%;
+    object-fit: contain;
+}
+
+/* -------------------------------------------------------------------------
+   Site-wide Footer (rendered once, on every page)
+   ------------------------------------------------------------------------- */
+.ms-site-footer {
+    text-align: center;
+    padding: 26px 20px 20px 20px;
+    margin-top: 22px;
+    border-top: 1px solid var(--ms-border);
+}
+
+.ms-site-footer-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 12px;
+}
+
+.ms-site-footer-brand {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--ms-text);
+}
+
+.ms-site-footer-tagline {
+    font-size: 0.82rem;
+    color: var(--ms-text-soft);
+    font-weight: 700;
+}
+
+.ms-site-footer-links {
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+
+.ms-footer-link {
+    color: var(--ms-text-soft);
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.15s ease;
+}
+
+.ms-footer-link:hover { color: var(--ms-blue); }
+
+.ms-footer-dot { color: var(--ms-border); margin: 0 8px; }
+
+.ms-site-footer-copy {
+    font-size: 0.78rem;
+    color: var(--ms-text-soft);
+    font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------
+   Floating illustration + subtle animated hero glow
+   ------------------------------------------------------------------------- */
+@keyframes msFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.st-key-ms_hero div[data-testid="stImage"] img,
+.st-key-ms_about_card div[data-testid="stImage"] img {
+    animation: msFloat 4.5s ease-in-out infinite;
+}
+
+@keyframes msGlowPulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50% { opacity: 0.85; transform: scale(1.08); }
+}
+
+.st-key-ms_hero::before, .st-key-ms_hero::after {
+    animation: msGlowPulse 6s ease-in-out infinite;
+}
+
+/* -------------------------------------------------------------------------
+   About page — Timeline
+   ------------------------------------------------------------------------- */
+.ms-timeline-node {
+    position: relative;
+    text-align: center;
+    padding: 20px 12px 8px 12px;
+}
+
+.ms-timeline-node::before {
+    content: "";
+    position: absolute;
+    top: 44px;
+    left: -50%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--ms-border), var(--ms-blue), var(--ms-border));
+    z-index: 0;
+}
+
+.ms-timeline-node:first-child::before { display: none; }
+
+.ms-timeline-icon {
+    position: relative;
+    z-index: 1;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    border-radius: 50%;
+    background: var(--ms-white);
+    border: 2px solid var(--ms-blue);
+    margin: 0 auto 12px auto;
+    font-size: 1.1rem;
+    box-shadow: var(--ms-shadow-sm);
+}
+
+.ms-timeline-title {
+    font-weight: 800;
+    font-size: 0.94rem;
+    margin-bottom: 4px;
+}
+
+.ms-timeline-desc {
+    font-size: 0.78rem;
+    color: var(--ms-text-soft);
+    line-height: 1.4;
+}
+
+/* -------------------------------------------------------------------------
+   Chat bubbles — differentiate assistant vs user
+   ------------------------------------------------------------------------- */
+div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarAssistant"]) {
+    background: var(--ms-blue-light);
+}
+
+div[data-testid="stChatMessage"]:has(div[data-testid="stChatMessageAvatarUser"]) {
+    background: var(--ms-green-light);
+}
+
+/* -------------------------------------------------------------------------
+   Responsive
+   ------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .ms-stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .ms-stat:nth-child(2) { border-right: none; }
+}
+
+@media (max-width: 768px) {
+    .ms-hero-title { font-size: 2.2rem; }
+    .ms-hero-subtitle { font-size: 1.25rem; }
+    .st-key-ms_hero { padding: 28px 24px; }
+    .ms-stats-bar { grid-template-columns: repeat(2, 1fr); }
+}
