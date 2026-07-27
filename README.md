@@ -46,14 +46,7 @@ streamlit run app.py
 
 Visit `http://localhost:8501`.
 
-## Security note
 
-The original project's `.env` file had a live `GEMINI_API_KEY` committed
-inside the shared zip. **Rotate that key** in Google AI Studio before using
-it anywhere further — treat it as compromised since it left your machine.
-Never commit `.env`; only `.env.example` should be in version control.
-
-## Important — this environment couldn't run a live smoke test
 
 I don't have network/package-install access in this sandbox, so I could not
 `pip install fastapi/streamlit/faiss/sentence-transformers` and actually
