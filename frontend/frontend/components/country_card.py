@@ -1,6 +1,4 @@
-"""Renders the per-country regulation cards used on the Scan Medicine page.
-Pure presentation: everything it shows comes from `entry`, which the
-view already fetched from the backend via api_client."""
+
 import re
 
 import streamlit as st
