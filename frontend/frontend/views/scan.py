@@ -59,6 +59,7 @@ def render_scan() -> None:
                 )
                 if st.button(toggle_icon, key="scan_mode_toggle", help=toggle_help):
                     st.session_state.scan_mode = "text" if st.session_state.scan_mode == "photo" else "photo"
+                    st.session_state.scan_result = None
                     st.rerun()
 
             uploaded_file, medicine_input = None, None
@@ -78,26 +79,53 @@ def render_scan() -> None:
 
         analyze = st.button("Analyze Medicine", use_container_width=True, type="primary")
 
-    if not analyze:
+    # Only hit the backend when "Analyze Medicine" is freshly clicked. The
+    # outcome is cached in session_state so that later reruns triggered by
+    # buttons inside the result cards (Suggest Alternative / Know More)
+    # keep showing these results instead of reverting to "How it works".
+    if analyze:
+        if uploaded_file is not None:
+            st.session_state.scan_result = _run_image_scan(uploaded_file, destination_country)
+        elif medicine_input:
+            st.session_state.scan_result = _run_text_search(medicine_input, destination_country)
+        else:
+            st.session_state.scan_result = None
+        st.session_state.expanded_alternatives = set()
+
+    result = st.session_state.get("scan_result")
+    if not result:
         _render_how_it_works()
         return
 
-    if uploaded_file is not None:
-        _handle_image_scan(uploaded_file, destination_country)
-    elif medicine_input:
-        _handle_text_search(medicine_input, destination_country)
+    if result["kind"] == "image":
+        _render_image_result(result)
+    elif result["kind"] == "image_error":
+        _render_not_detected(result.get("error_detail", ""))
+    else:
+        _render_text_result(result)
 
 
-def _handle_image_scan(uploaded_file, destination_country: str | None) -> None:
-    st.image(uploaded_file, caption="Uploaded Medicine Image")
-    st.markdown('<h2 class="ms-section-title"> OCR Analysis Result</h2>', unsafe_allow_html=True)
-
+def _run_image_scan(uploaded_file, destination_country: str | None) -> dict:
+    image_bytes = uploaded_file.getvalue()
     with st.spinner(" Analyzing medicine... Please wait."):
         try:
-            result = api_client.scan_image(uploaded_file.getvalue(), uploaded_file.name, destination_country)
+            api_result = api_client.scan_image(image_bytes, uploaded_file.name, destination_country)
         except api_client.ApiError as exc:
-            _render_not_detected(str(exc))
-            return
+            return {"kind": "image_error", "error_detail": str(exc)}
+
+    medicine_name = api_result["medicine_name"]
+    _log_history(medicine_name, "OCR Upload", [f"Medicine name: {medicine_name}"])
+    return {
+        "kind": "image",
+        "image_bytes": image_bytes,
+        "medicine_name": medicine_name,
+        "results": api_result["results"],
+    }
+
+
+def _render_image_result(result: dict) -> None:
+    st.image(result["image_bytes"], caption="Uploaded Medicine Image")
+    st.markdown('<h2 class="ms-section-title"> OCR Analysis Result</h2>', unsafe_allow_html=True)
 
     medicine_name = result["medicine_name"]
     with st.container(key="ms_result_card_ocr"):
@@ -112,8 +140,6 @@ def _handle_image_scan(uploaded_file, destination_country: str | None) -> None:
         with st.expander(" Detection Details"):
             st.write("• Detected by: Gemini Vision")
             st.write(f"• Medicine name: {medicine_name}")
-
-    _log_history(medicine_name, "OCR Upload", [f"Medicine name: {medicine_name}"])
 
 
 def _render_not_detected(error_detail: str = "") -> None:
@@ -132,7 +158,40 @@ def _render_not_detected(error_detail: str = "") -> None:
             st.caption(error_detail)
 
 
-def _handle_text_search(medicine_input: str, destination_country: str | None) -> None:
+def _run_text_search(medicine_input: str, destination_country: str | None) -> dict:
+    try:
+        api_result = api_client.search_medicine(medicine_input, destination_country)
+    except api_client.ApiError as exc:
+        return {"kind": "text_error", "medicine_input": medicine_input, "error_detail": str(exc)}
+
+    details = [f"Medicine: {medicine_input}", "Search method: Manual Search"]
+    if destination_country:
+        details.append(f"Destination country: {destination_country}")
+    _log_history(medicine_input, "Manual Search", details)
+
+    return {
+        "kind": "text",
+        "medicine_input": medicine_input,
+        "destination_country": destination_country,
+        "results": api_result["results"],
+    }
+
+
+def _render_text_result(result: dict) -> None:
+    if result["kind"] == "text_error":
+        st.markdown('<h2 class="ms-section-title"> Search Result</h2>', unsafe_allow_html=True)
+        with st.container(key="ms_result_card_search"):
+            st.markdown(
+                f'<div class="ms-result-header"><span class="ms-result-name">💊 {result["medicine_input"]}</span>'
+                f'<span class="ms-badge ms-badge-required"> Manual Search</span></div>',
+                unsafe_allow_html=True,
+            )
+            st.error(f"Search is unavailable right now ({result['error_detail']}).")
+        return
+
+    medicine_input = result["medicine_input"]
+    destination_country = result.get("destination_country")
+
     st.markdown('<h2 class="ms-section-title"> Search Result</h2>', unsafe_allow_html=True)
     with st.container(key="ms_result_card_search"):
         st.markdown(
@@ -140,13 +199,6 @@ def _handle_text_search(medicine_input: str, destination_country: str | None) ->
             f'<span class="ms-badge ms-badge-required"> Manual Search</span></div>',
             unsafe_allow_html=True,
         )
-
-        try:
-            result = api_client.search_medicine(medicine_input, destination_country)
-        except api_client.ApiError as exc:
-            st.error(f"Search is unavailable right now ({exc}).")
-            return
-
         render_country_results(result["results"], medicine_name=medicine_input, context_prefix="search")
 
     with st.container(border=True):
@@ -155,8 +207,3 @@ def _handle_text_search(medicine_input: str, destination_country: str | None) ->
             st.write("• Search method: Manual Search")
             if destination_country:
                 st.write(f"• Destination country: {destination_country}")
-
-    details = [f"Medicine: {medicine_input}", "Search method: Manual Search"]
-    if destination_country:
-        details.append(f"Destination country: {destination_country}")
-    _log_history(medicine_input, "Manual Search", details)
