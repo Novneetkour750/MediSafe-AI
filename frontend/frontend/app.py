@@ -1,14 +1,3 @@
-"""
-Streamlit entrypoint.
-
-Run with:  streamlit run app.py  (from the frontend/ directory, with
-the backend already running — see BACKEND_URL in config.py)
-
-This file does exactly four things: page config, load CSS, initialize
-session state, and route to the current view. No business logic, no
-HTML markup, no HTTP calls — those live in views/, components/, and
-api_client.py respectively.
-"""
 import streamlit as st
 
 from components.footer import render_footer
