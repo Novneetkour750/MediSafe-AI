@@ -55,58 +55,58 @@ def render_country_result_card(entry: dict, medicine_name: str = "", card_key: s
     reason, travel_advice, alternative = entry.get("reason"), entry.get("travel_advice"), entry.get("alternative")
     confidence = entry.get("confidence")
 
-    html = '<div class="ms-country-card"><div class="ms-country-card-header">'
-    if country:
-        html += f'<span class="ms-country-name">{flag} {country}</span>'
-    if status:
-        cls, icon = _status_style(status)
-        html += f'<span class="ms-badge {cls}">{icon} {status}</span>'
-    html += "</div>"
-    if reason:
-        html += f'<div class="ms-country-detail"><strong>Reason:</strong> {reason}</div>'
-    if travel_advice:
-        html += f'<div class="ms-country-detail"><strong>Travel advice:</strong> {travel_advice}</div>'
-    if confidence is not None:
-        pct = max(0, min(100, int(confidence)))
-        html += (
-            f'<div class="ms-confidence-row">'
-            f'<div class="ms-confidence-track"><div class="ms-confidence-fill" style="width:{pct}%;"></div></div>'
-            f'<span class="ms-confidence-label">{pct}% confidence</span></div>'
-        )
-    html += "</div>"
-    st.markdown(html, unsafe_allow_html=True)
-
-    st.markdown('<div class="ms-card-actions">', unsafe_allow_html=True)
-    action_cols = st.columns(2)
-
-    with action_cols[0]:
-        if st.button("💊 Suggest Alternative", key=f"alt_btn_{card_key}", use_container_width=True):
-            if card_key in st.session_state.expanded_alternatives:
-                st.session_state.expanded_alternatives.discard(card_key)
-            else:
-                st.session_state.expanded_alternatives.add(card_key)
-    know_more_col = action_cols[1]
-
-    with know_more_col:
-        if st.button("🤖 Know More", key=f"km_btn_{card_key}", use_container_width=True):
-            st.session_state.chat_context = {
-                "medicine_name": medicine_name, "country": country, "status": status,
-                "reason": reason, "travel_advice": travel_advice, "alternative": alternative,
-            }
-            st.session_state.chat_autoquery = (
-                f"Tell me more about {medicine_name or 'this medicine'}'s regulatory status "
-                f"in {country or 'this country'} and what I should know before traveling."
+    with st.container(border=True, key=f"ms_card_wrap_{card_key}"):
+        html = '<div class="ms-country-card-header">'
+        if country:
+            html += f'<span class="ms-country-name">{flag} {country}</span>'
+        if status:
+            cls, icon = _status_style(status)
+            html += f'<span class="ms-badge {cls}">{icon} {status}</span>'
+        html += "</div>"
+        if reason:
+            html += f'<div class="ms-country-detail"><strong>Reason:</strong> {reason}</div>'
+        if travel_advice:
+            html += f'<div class="ms-country-detail"><strong>Travel advice:</strong> {travel_advice}</div>'
+        if confidence is not None:
+            pct = max(0, min(100, int(confidence)))
+            html += (
+                f'<div class="ms-confidence-row">'
+                f'<div class="ms-confidence-track"><div class="ms-confidence-fill" style="width:{pct}%;"></div></div>'
+                f'<span class="ms-confidence-label">{pct}% confidence</span></div>'
             )
-            go_to("AI Chat")
+        st.markdown(html, unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown('<div class="ms-card-actions">', unsafe_allow_html=True)
+        action_cols = st.columns(2)
 
-    if card_key in st.session_state.expanded_alternatives:
-        try:
-            result = api_client.get_alternatives(entry, medicine_name)
-            render_alternative_panel(result["alternatives"], country or "your destination", result["source"])
-        except api_client.ApiError as exc:
-            st.warning(f"Couldn't load alternatives right now ({exc}).")
+        with action_cols[0]:
+            if st.button("💊 Suggest Alternative", key=f"alt_btn_{card_key}", use_container_width=True):
+                if card_key in st.session_state.expanded_alternatives:
+                    st.session_state.expanded_alternatives.discard(card_key)
+                else:
+                    st.session_state.expanded_alternatives.add(card_key)
+        know_more_col = action_cols[1]
+
+        with know_more_col:
+            if st.button("🤖 Know More", key=f"km_btn_{card_key}", use_container_width=True):
+                st.session_state.chat_context = {
+                    "medicine_name": medicine_name, "country": country, "status": status,
+                    "reason": reason, "travel_advice": travel_advice, "alternative": alternative,
+                }
+                st.session_state.chat_autoquery = (
+                    f"Tell me more about {medicine_name or 'this medicine'}'s regulatory status "
+                    f"in {country or 'this country'} and what I should know before traveling."
+                )
+                go_to("AI Chat")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        if card_key in st.session_state.expanded_alternatives:
+            try:
+                result = api_client.get_alternatives(entry, medicine_name)
+                render_alternative_panel(result["alternatives"], country or "your destination", result["source"])
+            except api_client.ApiError as exc:
+                st.warning(f"Couldn't load alternatives right now ({exc}).")
 
 
 def render_country_results(country_results: list[dict], medicine_name: str = "", context_prefix: str = "result") -> None:
