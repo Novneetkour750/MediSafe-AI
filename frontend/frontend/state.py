@@ -1,8 +1,4 @@
-"""All st.session_state initialization in one place, so every view can
-assume the keys it needs already exist."""
 import streamlit as st
-
-
 def init_session_state() -> None:
     defaults = {
         "page": "Home",
