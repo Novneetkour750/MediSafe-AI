@@ -13,7 +13,7 @@ import streamlit as st
 
 from components.footer import render_footer
 from components.navbar import render_navbar
-from config import CSS_FILE
+from config import CSS_FILE,FAVICON_IMAGE
 from state import init_session_state
 from views.about import render_about
 from views.chat import render_chat
@@ -21,8 +21,10 @@ from views.history import render_history
 from views.home import render_home
 from views.scan import render_scan
 
+
 st.set_page_config(
     page_title="MediSafe AI",
+    page_icon=str(FAVICON_IMAGE), 
     layout="wide",
     initial_sidebar_state="collapsed",
 )
