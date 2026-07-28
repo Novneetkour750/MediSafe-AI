@@ -65,11 +65,11 @@ understanding.
 
 ```
 medisafe-ai/
-├── backend/          FastAPI service — owns data, AI calls, business logic
-├── frontend/          Streamlit UI — pure presentation, talks to the backend over HTTP
-├── dataset/            medicine_travel_regulations.csv — the regulation data
-├── models/              medisafe.index — the FAISS semantic search index
-└── ARCHITECTURE.md   detailed design notes
+├── backend/                FastAPI service — owns data, AI calls, business logic
+├── frontend/frontend/       Streamlit UI — pure presentation, talks to the backend over HTTP
+├── dataset/                 medicine_travel_regulations.csv — the regulation data
+├── models/                   medisafe.index — the FAISS semantic search index
+└── .streamlit/config.toml    Shared Streamlit theme + client toolbar settings
 ```
 
 ### Backend layout
@@ -83,9 +83,12 @@ backend/
 ├── dependencies.py                Builds every service once and hands it to routes
 │                                  through FastAPI's dependency injection.
 ├── routes/
-│   ├── scan.py                   Endpoints for the Scan Medicine page: image upload,
-│   │                             manual search, and alternatives.
-│   ├── chat.py                   Endpoints for the AI chat and follow-up questions.
+│   ├── scan.py                   Endpoints for the Scan Medicine page: image upload
+│   │                             (POST /api/scan/image), manual search
+│   │                             (GET /api/scan/search), and alternatives
+│   │                             (POST /api/scan/alternatives).
+│   ├── chat.py                   Endpoints for the AI chat (POST /api/chat) and
+│   │                             follow-up "Know More" questions (POST /api/chat/followup).
 │   ├── reference.py                Read-only endpoints: list of countries, list of
 │   │                             medicines, and platform statistics.
 │   └── health.py                    Health check endpoint.
@@ -117,10 +120,11 @@ backend/
 ### Frontend layout
 
 ```
-frontend/
-├── app.py               Entry point: page setup, loads the CSS, sets up session state,
-│                         and routes to the current page. No business logic here either.
-├── config.py             Backend URL and asset paths.
+frontend/frontend/
+├── app.py               Entry point: page setup, favicon, hides Streamlit's default
+│                         chrome, loads the CSS, sets up session state, and routes to
+│                         the current page. No business logic here either.
+├── config.py             Backend URL (env var or Streamlit secrets) and asset paths.
 ├── api_client.py          The only file in the frontend that knows the backend's URL or
 │                         the shape of its responses. Every backend call goes through here.
 ├── state.py               Sets up Streamlit's session state in one place.
@@ -131,11 +135,14 @@ frontend/
 │   ├── about.py             About page.
 │   └── history.py            Shows the user's past scans and searches for the current
 │                            session.
-└── components/
-    ├── navbar.py, footer.py    Shared page chrome.
-    ├── country_card.py          Renders each country's result card, including the
-    │                            "Suggest Alternative" and "Know More" buttons.
-    └── illustration.py, icons.py   Small presentational helpers.
+├── components/
+│   ├── navbar.py, footer.py    Shared page chrome.
+│   ├── country_card.py          Renders each country's result card, including the
+│   │                            "Suggest Alternative" and "Know More" buttons.
+│   └── illustration.py, icons.py   Small presentational helpers.
+└── assets/
+    ├── css/style.css              All custom styling, injected once at startup.
+    └── images/                     Illustrations, tech-stack icons, and the app favicon.
 ```
 
 ## 4. How a request flows through the system
@@ -193,27 +200,30 @@ governing authority, the reason for that status, any listed alternative,
 travel advice for that medicine, the source of the information, and when
 it was last updated. The dataset currently covers 10 countries (Australia,
 Canada, France, Germany, India, Japan, Singapore, UAE, UK, and USA) and 55
-distinct medicines.
+distinct medicines, across 550 rows.
 
 Each row also has a `document` column, a single sentence that summarises
 the whole row. `scripts/build_index.py` encodes every one of these
-sentences into a vector using the `all-MiniLM-L6-v2` sentence-transformer
-model, and stores the vectors in a FAISS index (`models/medisafe.index`).
-At query time, the user's question is encoded with the same model, and
-FAISS returns the rows whose vectors are closest to it. This is what
-allows the search to understand a query like "medicine for headache in
-Japan" even if it does not exactly match the wording in the dataset, since
-the match is based on meaning rather than exact keywords.
+sentences into a vector using the `all-MiniLM-L6-v2` embedding model
+(loaded through `fastembed`), and stores the vectors in a FAISS index
+(`models/medisafe.index`). At query time, the user's question is encoded
+with the same model, and FAISS returns the rows whose vectors are closest
+to it. This is what allows the search to understand a query like "medicine
+for headache in Japan" even if it does not exactly match the wording in
+the dataset, since the match is based on meaning rather than exact
+keywords.
 
 ## 6. Technology used
 
-- **Backend:** FastAPI, Pydantic, pandas, FAISS, sentence-transformers,
-  the `google-genai` SDK, Pillow, python-dotenv.
+- **Backend:** FastAPI, Pydantic, pandas, numpy, FAISS (`faiss-cpu`),
+  `fastembed` (for the `all-MiniLM-L6-v2` embedding model), the
+  `google-genai` SDK, Pillow, python-dotenv, python-multipart.
 - **Frontend:** Streamlit, requests, python-dotenv.
 - **AI model:** Google Gemini, used for two purposes only — reading a
   medicine name off a photo, and answering natural-language questions.
 - **Search:** FAISS with the `all-MiniLM-L6-v2` embedding model for
   semantic (meaning-based) search over the dataset.
+
 
 ## 7. Running the project
 
@@ -252,7 +262,7 @@ where every endpoint can be tried directly.
 ### Frontend (in a separate terminal)
 
 ```bash
-cd frontend
+cd frontend/frontend
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
@@ -260,37 +270,14 @@ streamlit run app.py
 
 By default the frontend looks for the backend at `http://localhost:8000`.
 This can be changed by setting a `BACKEND_URL` environment variable if the
-backend is running somewhere else.
+backend is running somewhere else. When deployed on Streamlit Community
+Cloud, `BACKEND_URL` can also be set as a Streamlit secret
+(`.streamlit/secrets.toml` or the app's "Secrets" settings page) — the
+frontend checks `st.secrets` first and falls back to the environment
+variable.
 
 Visit `http://localhost:8501` to use the app.
 
-## 8. A note on the Gemini API key
-
-The `.env` file used during development has a live `GEMINI_API_KEY` inside
-it. Treat that key as compromised if it has ever left a private machine,
-and rotate it in Google AI Studio before relying on it further. `.env`
-should never be committed to version control.
-
-## 9. Design decisions worth calling out
-
-- **One card per country, always.** The regulation lookup deliberately
-  keeps only the single best-scoring match for each country, so a user
-  never sees two conflicting cards for the same destination.
-- **A minimum match score.** Any match below a configured threshold is
-  discarded rather than shown, so the app does not present a low-confidence
-  guess as if it were a confirmed answer.
-- **Alternatives are never invented.** The alternative suggested to a user
-  either comes directly from the dataset's own alternative column, or from
-  another medicine already marked "Allowed" in the same country for a
-  similar reason. The AI model is never asked to guess a substitute.
-- **Errors are typed, not ad hoc.** Failures such as "no medicine could be
-  read from that photo" or "the AI call failed" are raised as specific
-  exceptions in the backend and translated into proper HTTP status codes
-  in one place, instead of being handled differently in every function
-  that might fail.
-- **The frontend never sees the dataset or the model.** All of it goes
-  through `api_client.py`, so the presentation layer can be changed later
-  without touching how the data or the AI model are handled.
 
 ## 10. Known limitations
 
@@ -300,6 +287,3 @@ should never be committed to version control.
 - There is no automated test suite yet.
 - The dataset currently covers 10 countries and 55 medicines; expanding
   coverage means adding rows to the CSV and rebuilding the index.
-
-See `ARCHITECTURE.md` for the full design write-up, including the earlier
-state of the project and the reasoning behind each structural change.
