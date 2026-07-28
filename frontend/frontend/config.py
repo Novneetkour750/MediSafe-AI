@@ -16,6 +16,7 @@ TECH_ICONS_DIR = IMAGES_DIR / "tech_icons"
 FEATURE_ICONS_DIR = IMAGES_DIR / "feature_icons"
 CLOCK_ICON = IMAGES_DIR / "icons" / "clock_icon.png"
 HISTORY_FOLDER_ICON = IMAGES_DIR / "icons" / "history_folder.jpeg"
+FAVICON_IMAGE = IMAGES_DIR / "favicon.png"
 if "BACKEND_URL" in st.secrets:
   os.environ["BACKEND_URL"] = st.secrets["BACKEND_URL"]
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
