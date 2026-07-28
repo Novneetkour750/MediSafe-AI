@@ -1,10 +1,8 @@
 """Frontend configuration: where the backend API lives, where assets are."""
 import os
 from pathlib import Path
+import streamlit as st
 
-from dotenv import load_dotenv
-
-load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
 CSS_FILE = BASE_DIR / "assets" / "css" / "style.css"
@@ -17,5 +15,6 @@ TECH_ICONS_DIR = IMAGES_DIR / "tech_icons"
 FEATURE_ICONS_DIR = IMAGES_DIR / "feature_icons"
 CLOCK_ICON = IMAGES_DIR / "icons" / "clock_icon.png"
 HISTORY_FOLDER_ICON = IMAGES_DIR / "icons" / "history_folder.jpeg"
+if "BACKEND_URL" in st.secrets:
+  os.environ["BACKEND_URL"] = st.secrets["BACKEND_URL"]
 
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
