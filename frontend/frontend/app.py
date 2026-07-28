@@ -23,7 +23,6 @@ from views.scan import render_scan
 
 st.set_page_config(
     page_title="MediSafe AI",
-    page_icon="💊",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -33,12 +32,18 @@ st.markdown(
     <style>
     #MainMenu {display: none;}
     footer {display: none;}
-    header {display: none;}
+    header[data-testid="stHeader"] {
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
+    }
     [data-testid="stSidebar"] {display: none;}
     [data-testid="collapsedControl"] {display: none;}
     [data-testid="stDecoration"] {display: none;}
     [data-testid="stToolbar"] {display: none;}
     [data-testid="stStatusWidget"] {display: none;}
+    [data-testid="stAppViewContainer"] {padding-top: 0 !important;}
+    [data-testid="stAppViewContainer"] > .main {padding-top: 0 !important;}
     </style>
     """,
     unsafe_allow_html=True,
