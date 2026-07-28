@@ -656,10 +656,7 @@ div[data-testid="stFileUploaderDropzone"] button:hover {
 
 .ms-step-title { font-weight: 800; font-size: 0.92rem; margin-bottom: 4px; }
 .ms-step-desc { font-size: 0.79rem; color: var(--ms-text-soft); }
-
-/* -------------------------------------------------------------------------
-   Result containers (native st.container(border=True))
-   ------------------------------------------------------------------------- */
+/* Result Cards */
 div[data-testid="stVerticalBlockBorderWrapper"] {
     border-radius: var(--ms-radius-lg) !important;
     border: 1px solid var(--ms-border) !important;
@@ -679,10 +676,7 @@ div[data-testid="stExpander"] {
     border: 1px solid var(--ms-border) !important;
     overflow: hidden;
 }
-
-/* -------------------------------------------------------------------------
-   Status badges + demo country/result cards (Scan Medicine result page)
-   ------------------------------------------------------------------------- */
+/* Status Badges */
 .ms-badge {
     display: inline-flex;
     align-items: center;
@@ -887,10 +881,7 @@ div[data-testid="stExpander"] {
     color: var(--ms-blue-dark);
     margin-bottom: 10px;
 }
-
-/* -------------------------------------------------------------------------
-   AI Chat
-   ------------------------------------------------------------------------- */
+/* AI- CHAT*/
 .st-key-ms_chat_card {
     background: var(--ms-white);
     border: 1px solid var(--ms-border);
@@ -930,10 +921,7 @@ div[data-testid="stChatInput"] textarea { border-radius: 15px !important; }
     font-weight: 700;
     font-size: 0.88rem;
 }
-
-/* -------------------------------------------------------------------------
-   History filters
-   ------------------------------------------------------------------------- */
+/* History filters*/
 .ms-history-filters {
     background: var(--ms-white);
     border: 1px solid var(--ms-border);
@@ -1016,10 +1004,7 @@ div[data-testid="stChatInput"] textarea { border-radius: 15px !important; }
     max-width: 70%;
     object-fit: contain;
 }
-
-/* -------------------------------------------------------------------------
-   Site-wide Footer (rendered once, on every page)
-   ------------------------------------------------------------------------- */
+/* site footer*/
 .ms-site-footer {
     text-align: center;
     padding: 26px 20px 20px 20px;
