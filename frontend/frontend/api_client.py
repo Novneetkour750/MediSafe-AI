@@ -4,7 +4,9 @@ from config import BACKEND_URL
 
 
 class ApiError(Exception):
-  def _request(method: str, path: str, **kwargs):
+     pass 
+  
+def _request(method: str, path: str, **kwargs):
     try:
         response = requests.request(method, f"{BACKEND_URL}{path}", timeout=30, **kwargs)
         response.raise_for_status()
