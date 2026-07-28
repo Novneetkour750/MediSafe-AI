@@ -1,4 +1,3 @@
-
 import re
 
 import streamlit as st
@@ -18,10 +17,6 @@ def _status_style(status: str) -> tuple[str, str]:
     if "ban" in s:
         return "ms-badge-banned", "⛔"
     return "ms-badge-neutral", "ℹ️"
-
-
-def _is_restricted(status: str) -> bool:
-    return any(k in (status or "").lower() for k in ["restrict", "ban", "prescription"])
 
 
 def render_alternative_panel(alternatives: list[dict], country: str, source: str) -> None:
@@ -71,8 +66,6 @@ def render_country_result_card(entry: dict, medicine_name: str = "", card_key: s
         html += f'<div class="ms-country-detail"><strong>Reason:</strong> {reason}</div>'
     if travel_advice:
         html += f'<div class="ms-country-detail"><strong>Travel advice:</strong> {travel_advice}</div>'
-    if alternative:
-        html += f'<div class="ms-country-detail"><strong>Alternative:</strong> {alternative}</div>'
     if confidence is not None:
         pct = max(0, min(100, int(confidence)))
         html += (
@@ -83,20 +76,16 @@ def render_country_result_card(entry: dict, medicine_name: str = "", card_key: s
     html += "</div>"
     st.markdown(html, unsafe_allow_html=True)
 
-    is_restricted = _is_restricted(status)
     st.markdown('<div class="ms-card-actions">', unsafe_allow_html=True)
-    action_cols = st.columns(2) if is_restricted else st.columns(1)
+    action_cols = st.columns(2)
 
-    if is_restricted:
-        with action_cols[0]:
-            if st.button("💊 Suggest Alternative", key=f"alt_btn_{card_key}", use_container_width=True):
-                if card_key in st.session_state.expanded_alternatives:
-                    st.session_state.expanded_alternatives.discard(card_key)
-                else:
-                    st.session_state.expanded_alternatives.add(card_key)
-        know_more_col = action_cols[1]
-    else:
-        know_more_col = action_cols[0]
+    with action_cols[0]:
+        if st.button("💊 Suggest Alternative", key=f"alt_btn_{card_key}", use_container_width=True):
+            if card_key in st.session_state.expanded_alternatives:
+                st.session_state.expanded_alternatives.discard(card_key)
+            else:
+                st.session_state.expanded_alternatives.add(card_key)
+    know_more_col = action_cols[1]
 
     with know_more_col:
         if st.button("🤖 Know More", key=f"km_btn_{card_key}", use_container_width=True):
@@ -112,7 +101,7 @@ def render_country_result_card(entry: dict, medicine_name: str = "", card_key: s
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    if is_restricted and card_key in st.session_state.expanded_alternatives:
+    if card_key in st.session_state.expanded_alternatives:
         try:
             result = api_client.get_alternatives(entry, medicine_name)
             render_alternative_panel(result["alternatives"], country or "your destination", result["source"])
