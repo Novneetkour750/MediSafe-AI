@@ -13,7 +13,7 @@ from views.scan import render_scan
 
 st.set_page_config(
     page_title="MediSafe AI",
-    page_icon= FAVICON_IMAGE, 
+    page_icon= str(FAVICON_IMAGE), 
     layout="wide",
     initial_sidebar_state="collapsed",
 )
