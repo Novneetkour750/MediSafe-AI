@@ -7,7 +7,6 @@ from config import ABOUT_IMAGE, TECH_ICONS_DIR
 
 
 def _icon_data_uri(filename: str) -> str | None:
-    """Return a base64 data URI for a tech icon, or None if it's missing."""
     path = TECH_ICONS_DIR / filename
     if not path.exists():
         return None
