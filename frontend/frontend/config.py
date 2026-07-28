@@ -1,4 +1,3 @@
-"""Frontend configuration: where the backend API lives, where assets are."""
 import os
 from pathlib import Path
 import streamlit as st
@@ -17,4 +16,4 @@ CLOCK_ICON = IMAGES_DIR / "icons" / "clock_icon.png"
 HISTORY_FOLDER_ICON = IMAGES_DIR / "icons" / "history_folder.jpeg"
 if "BACKEND_URL" in st.secrets:
   os.environ["BACKEND_URL"] = st.secrets["BACKEND_URL"]
-
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
