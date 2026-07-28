@@ -55,7 +55,7 @@ p { color: var(--ms-text-soft); }
 }
  .st-key-ms_hero, .st-key-ms_upload_card, .ms-feature-card, .ms-stats-bar, .st-key-ms_about_card,
 .ms-history-card, .st-key-ms_chat_card, .st-key-ms_result_card_ocr,
-.st-key-ms_result_card_not_detected, .st-key-ms_result_card_search, .ms-country-card {
+.st-key-ms_result_card_not_detected, .st-key-ms_result_card_search, [class*="st-key-ms_card_wrap_"] {
     animation: msFadeUp 0.5s ease both;
 }
 /* Top Navigation */
@@ -725,16 +725,16 @@ div[data-testid="stExpander"] {
     margin-top: 14px;
 }
 
-.ms-country-card {
+[class*="st-key-ms_card_wrap_"] {
     background: var(--ms-white);
-    border: 1px solid var(--ms-border);
-    border-radius: 16px;
-    padding: 16px 18px;
+    border: 1px solid var(--ms-border) !important;
+    border-radius: 16px !important;
     box-shadow: var(--ms-shadow-sm);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 14px;
 }
 
-.ms-country-card:hover {
+[class*="st-key-ms_card_wrap_"]:hover {
     transform: translateY(-3px);
     box-shadow: var(--ms-shadow);
 }
