@@ -9,7 +9,6 @@ from state import go_to
 
 
 def _icon_data_uri(filename: str) -> str | None:
-    """Return a base64 data URI for a feature icon, or None if it's missing."""
     path = FEATURE_ICONS_DIR / filename
     if not path.exists():
         return None
@@ -18,7 +17,6 @@ def _icon_data_uri(filename: str) -> str | None:
 
 
 def _get_platform_stats() -> list[tuple[str, str]]:
-    """Live stats from the backend, with a safe static fallback if it's unreachable."""
     try:
         stats = api_client.get_stats()
         return [
