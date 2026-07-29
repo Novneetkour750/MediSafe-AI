@@ -11,38 +11,52 @@ _LAST_MESSAGE_ANCHOR_ID = "ms-last-message-anchor"
 
 def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
     """Streamlit's chat_input auto-focuses on every rerun, which drags the
-    whole page down to the very bottom. This overrides that:
+    whole page down to the very bottom. Streamlit does this at a timing we
+    don't control, so instead of fixing the scroll position once, we keep
+    re-asserting the target position for about a second — that way, whenever
+    Streamlit's own scroll/focus fires, ours wins right after it.
+
     - first visit to the page: don't scroll at all, stay at the top.
     - later reruns: scroll only far enough to reveal the last message,
       not all the way to the bottom of the page.
     """
-    target_js = (
-        f"""
-        var el = doc.getElementById("{_LAST_MESSAGE_ANCHOR_ID}");
-        if (el) {{ el.scrollIntoView({{behavior: "auto", block: "end"}}); }}
-        """
-        if scroll_to_last_message
-        else """
-        var container = doc.querySelector('[data-testid="stAppViewContainer"]');
-        if (container) { container.scrollTo({top: 0, behavior: "auto"}); }
-        window.parent.scrollTo(0, 0);
-        """
-    )
+    target = "true" if scroll_to_last_message else "false"
     components.html(
         f"""
         <script>
         (function() {{
             var doc = window.parent.document;
-            function blurChatInput() {{
-                var textarea = doc.querySelector('[data-testid="stChatInput"] textarea');
-                if (textarea) {{ textarea.blur(); }}
+            var scrollToLastMessage = {target};
+            var anchorId = "{_LAST_MESSAGE_ANCHOR_ID}";
+
+            function getScrollEl() {{
+                return doc.scrollingElement || doc.documentElement || doc.body;
             }}
-            function run() {{
-                blurChatInput();
-                {target_js}
+
+            function blurChatInputIfFocused() {{
+                var ta = doc.querySelector('[data-testid="stChatInput"] textarea');
+                if (ta && doc.activeElement === ta) {{ ta.blur(); }}
             }}
-            setTimeout(run, 50);
-            setTimeout(blurChatInput, 300);
+
+            function applyTarget() {{
+                blurChatInputIfFocused();
+                if (scrollToLastMessage) {{
+                    var el = doc.getElementById(anchorId);
+                    if (el) {{ el.scrollIntoView({{behavior: "auto", block: "end"}}); }}
+                }} else {{
+                    var scrollEl = getScrollEl();
+                    if (scrollEl) {{ scrollEl.scrollTop = 0; }}
+                    var container = doc.querySelector('[data-testid="stAppViewContainer"]');
+                    if (container) {{ container.scrollTop = 0; }}
+                    window.parent.scrollTo(0, 0);
+                }}
+            }}
+
+            // Keep re-asserting for ~1s to win the race against Streamlit's
+            // own autofocus/scroll, whenever that happens to fire.
+            [0, 30, 60, 100, 150, 250, 400, 600, 900].forEach(function(ms) {{
+                setTimeout(applyTarget, ms);
+            }});
         }})();
         </script>
         """,
