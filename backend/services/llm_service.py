@@ -1,28 +1,3 @@
-"""
-LLMService — the ONLY file that talks to the Gemini API.
-
-Responsibilities:
-    - Own the genai client and model name.
-    - Turn (context, question) into a prompt string and call the model.
-    - Parse the model's JSON output when a structured answer is expected.
-
-Explicitly NOT responsible for:
-    - Fetching search results or regulation rows (SearchService /
-      RegulationService call this, then hand it their data).
-    - Deciding match thresholds, confidence scores, or which record is
-      "the" answer — that's a data/business decision, not a prompting
-      concern.
-    - Image loading/decoding (OCRService handles the file, then passes
-      an already-open PIL.Image in here).
-
-This intentionally still contains prompt templates: prompt text is a
-model-facing concern, tightly coupled to the exact JSON shape parsed
-below, and doesn't belong scattered across the services that just want
-an answer. What was previously duplicated here and in the FastAPI
-prototype (`google.generativeai` vs `google-genai`, older vs newer
-SDK) has been consolidated onto the `google-genai` client, which is
-the one already in production use.
-"""
 import json
 
 from google import genai
@@ -105,6 +80,11 @@ what is a safe alternative?"""
 
     def generate_chat_answer(self, question: str, context: str) -> str:
         prompt = f"""You are MediSafe AI, a friendly travel medicine regulation assistant.
+This is one turn in an ongoing chat — the user has already been
+greeted and knows who you are. Do NOT introduce or re-introduce
+yourself, do NOT say things like "Hi, I'm MediSafe AI" or any other
+greeting, and do NOT restate your role. Respond only with the
+answer itself, starting directly with the relevant information.
 
 Answer the traveler's question using ONLY the context below. If the
 context doesn't contain enough information to answer confidently, say
@@ -120,6 +100,11 @@ Question:
 
     def generate_followup_answer(self, medicine_context: dict, question: str) -> str:
         prompt = f"""You are MediSafe AI's "Know More" assistant.
+This is one turn in an ongoing chat — the user has already been
+greeted and knows who you are. Do NOT introduce or re-introduce
+yourself, do NOT say things like "Hi, I'm MediSafe AI" or any other
+greeting, and do NOT restate your role. Respond only with the
+answer itself, starting directly with the relevant information.
 
 Here is what we already know about this medicine, from our database:
 {json.dumps(medicine_context, indent=2)}
