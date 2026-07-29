@@ -10,14 +10,16 @@ _LAST_MESSAGE_ANCHOR_ID = "ms-last-message-anchor"
 
 
 def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
-    """Streamlit's chat_input auto-focuses on every rerun, which drags the
-    whole page down to the very bottom. Streamlit does this at a timing we
-    don't control, so instead of fixing the scroll position once, we keep
-    re-asserting the target position for about a second — that way, whenever
-    Streamlit's own scroll/focus fires, ours wins right after it.
+    """Streamlit's chat_input auto-focuses on rerun, which drags the whole
+    page down to the very bottom at a timing we don't control. Racing
+    against that with our own timers is unreliable — Streamlit's scroll can
+    win depending on network/render speed. Instead, we neutralize the
+    browser's native focus-triggered scrolling for a short settle window
+    (by intercepting scrollIntoView while a chat_input textarea has focus),
+    then apply our own explicit target once things have settled:
 
     - first visit to the page: don't scroll at all, stay at the top.
-    - later reruns: scroll only far enough to reveal the last message,
+    - later renders: scroll only far enough to reveal the last message,
       not all the way to the bottom of the page.
     """
     target = "true" if scroll_to_last_message else "false"
@@ -26,37 +28,41 @@ def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
         <script>
         (function() {{
             var doc = window.parent.document;
+            var win = window.parent;
             var scrollToLastMessage = {target};
             var anchorId = "{_LAST_MESSAGE_ANCHOR_ID}";
 
-            function getScrollEl() {{
-                return doc.scrollingElement || doc.documentElement || doc.body;
-            }}
-
-            function blurChatInputIfFocused() {{
-                var ta = doc.querySelector('[data-testid="stChatInput"] textarea');
-                if (ta && doc.activeElement === ta) {{ ta.blur(); }}
-            }}
+            // Neutralize the browser's native "scroll the focused element
+            // into view" behavior for a short window, since that's what
+            // drags the page to the bottom when chat_input auto-focuses.
+            var proto = win.HTMLElement.prototype;
+            var originalScrollIntoView = proto.scrollIntoView;
+            proto.scrollIntoView = function() {{}};
 
             function applyTarget() {{
-                blurChatInputIfFocused();
+                var ta = doc.querySelector('[data-testid="stChatInput"] textarea');
+                if (ta && doc.activeElement === ta) {{ ta.blur(); }}
+
                 if (scrollToLastMessage) {{
                     var el = doc.getElementById(anchorId);
-                    if (el) {{ el.scrollIntoView({{behavior: "auto", block: "end"}}); }}
+                    if (el) {{
+                        var rect = el.getBoundingClientRect();
+                        win.scrollBy(0, rect.bottom - win.innerHeight + 16);
+                    }}
                 }} else {{
-                    var scrollEl = getScrollEl();
-                    if (scrollEl) {{ scrollEl.scrollTop = 0; }}
+                    win.scrollTo(0, 0);
                     var container = doc.querySelector('[data-testid="stAppViewContainer"]');
                     if (container) {{ container.scrollTop = 0; }}
-                    window.parent.scrollTo(0, 0);
                 }}
             }}
 
-            // Keep re-asserting for ~1s to win the race against Streamlit's
-            // own autofocus/scroll, whenever that happens to fire.
-            [0, 30, 60, 100, 150, 250, 400, 600, 900].forEach(function(ms) {{
-                setTimeout(applyTarget, ms);
-            }});
+            setTimeout(function() {{
+                proto.scrollIntoView = originalScrollIntoView;
+                applyTarget();
+                // One more pass shortly after, in case late layout shifts
+                // (e.g. images) moved things slightly.
+                setTimeout(applyTarget, 150);
+            }}, 350);
         }})();
         </script>
         """,
@@ -117,12 +123,12 @@ def render_chat() -> None:
     autoquery = st.session_state.pop("chat_autoquery", None)
     user_query = autoquery or clicked_suggestion or typed
 
-    _apply_scroll_behavior(scroll_to_last_message=st.session_state.chat_visited)
-    st.session_state.chat_visited = True
-
     if not user_query:
+        _apply_scroll_behavior(scroll_to_last_message=st.session_state.chat_visited)
+        st.session_state.chat_visited = True
         return
 
+    st.session_state.chat_visited = True
     st.session_state.chat_messages.append({"role": "user", "text": user_query})
 
     with st.spinner("MediSafe AI is typing..."):
