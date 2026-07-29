@@ -1,9 +1,53 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 import api_client
 from config import BOT_AVATAR
 
 AI_UNAVAILABLE_MESSAGE = "MediSafe AI couldn't process that question right now. Please try again in a moment."
+
+_LAST_MESSAGE_ANCHOR_ID = "ms-last-message-anchor"
+
+
+def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
+    """Streamlit's chat_input auto-focuses on every rerun, which drags the
+    whole page down to the very bottom. This overrides that:
+    - first visit to the page: don't scroll at all, stay at the top.
+    - later reruns: scroll only far enough to reveal the last message,
+      not all the way to the bottom of the page.
+    """
+    target_js = (
+        f"""
+        var el = doc.getElementById("{_LAST_MESSAGE_ANCHOR_ID}");
+        if (el) {{ el.scrollIntoView({{behavior: "auto", block: "end"}}); }}
+        """
+        if scroll_to_last_message
+        else """
+        var container = doc.querySelector('[data-testid="stAppViewContainer"]');
+        if (container) { container.scrollTo({top: 0, behavior: "auto"}); }
+        window.parent.scrollTo(0, 0);
+        """
+    )
+    components.html(
+        f"""
+        <script>
+        (function() {{
+            var doc = window.parent.document;
+            function blurChatInput() {{
+                var textarea = doc.querySelector('[data-testid="stChatInput"] textarea');
+                if (textarea) {{ textarea.blur(); }}
+            }}
+            function run() {{
+                blurChatInput();
+                {target_js}
+            }}
+            setTimeout(run, 50);
+            setTimeout(blurChatInput, 300);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
 
 
 def render_chat() -> None:
@@ -40,6 +84,7 @@ def render_chat() -> None:
                     avatar = "🧑"
                 with st.chat_message(msg["role"], avatar=avatar):
                     st.markdown(msg["text"])
+        st.markdown(f'<div id="{_LAST_MESSAGE_ANCHOR_ID}"></div>', unsafe_allow_html=True)
 
     suggestions = [
         "Is Paracetamol allowed in USA?",
@@ -57,6 +102,9 @@ def render_chat() -> None:
     typed = st.chat_input("Type your question...")
     autoquery = st.session_state.pop("chat_autoquery", None)
     user_query = autoquery or clicked_suggestion or typed
+
+    _apply_scroll_behavior(scroll_to_last_message=st.session_state.chat_visited)
+    st.session_state.chat_visited = True
 
     if not user_query:
         return
