@@ -1,9 +1,4 @@
-"""
-/api/scan — the "Scan Medicine" page's two entry points.
 
-Routes only: parse the request, call MedicineService, return JSON.
-No business logic here — see services/medicine_service.py.
-"""
 from fastapi import APIRouter, Depends, File, Query, UploadFile
 
 from dependencies import get_medicine_service
