@@ -1,4 +1,4 @@
-"""Centralized logging configuration. Import get_logger(__name__) anywhere."""
+
 import logging
 import sys
 
