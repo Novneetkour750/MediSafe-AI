@@ -1,11 +1,4 @@
-"""
-Domain-specific exceptions.
 
-Routes catch these (via the FastAPI exception handlers registered in
-app.py) and translate them into proper HTTP status codes. Services
-raise them instead of returning ad-hoc {"success": False, ...} dicts,
-so error handling is consistent everywhere.
-"""
 
 
 class MediSafeError(Exception):
