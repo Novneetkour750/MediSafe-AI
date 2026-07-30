@@ -1,24 +1,4 @@
-"""
-MedicineService — the ONE orchestrator for the whole product.
 
-This is the only service routes are allowed to call directly. It
-coordinates OCRService, SearchService, RegulationService, and
-LLMService to fulfil a use case end-to-end, and returns plain
-dicts/values that routes adapt into Pydantic response models.
-
-Responsibilities:
-    - Image scan workflow: OCR -> regulation lookup.
-    - Manual search workflow: regulation lookup.
-    - Chat workflow: search -> LLM answer.
-    - Follow-up ("Know More") workflow: LLM answer grounded in a
-      specific card, no fresh search.
-    - Alternatives workflow: delegate to RegulationService.
-
-Explicitly NOT responsible for:
-    - Any HTTP concerns (status codes, request parsing) — routes do that.
-    - Any of the low-level work itself (embeddings, prompts, CSV I/O) —
-      it always delegates to the specialised service.
-"""
 from services.llm_service import LLMService
 from services.ocr_service import OCRService
 from services.regulation_service import RegulationService
@@ -77,7 +57,7 @@ class MedicineService:
         alternatives, source = self._regulation.resolve_alternatives(entry, medicine_name)
         return {"source": source, "alternatives": alternatives}
 
-    # -- AI Chat page ---------------------------------------------------------
+    # -- AI Chat page -------------------------
 
     def answer_chat_question(self, question: str) -> str:
         hits = self._search.search(question, k=5)
