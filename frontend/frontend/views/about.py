@@ -48,7 +48,7 @@ def render_about() -> None:
         ("python.png", "🐍", "Python"),
         ("gemini.png", "🧠", "Gemini AI"),
         ("faiss.png", "🔎", "FAISS"),
-        ("sentence.jpeg", "🔢", "Sentence Transformers"),
+        ("sentence.jpeg", "🔢", "Fastembed"),
     ]
     t_cols = st.columns(len(techs))
     for c, (filename, emoji, name) in zip(t_cols, techs):
