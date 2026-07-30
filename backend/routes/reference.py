@@ -1,8 +1,4 @@
-"""
-Read-only reference data used to populate dropdowns and the platform
-stats bar. Deliberately separate from /scan and /chat since it has a
-different shape (no service orchestration needed — straight repository reads).
-"""
+
 from fastapi import APIRouter, Depends
 
 from database.regulation_repository import RegulationRepository, get_repository
