@@ -1,13 +1,3 @@
-"""
-Composition root. Builds every service exactly once and exposes
-FastAPI dependency functions for routes to depend on.
-
-Routes never construct a service themselves — they declare
-`service: MedicineService = Depends(get_medicine_service)` and FastAPI
-(via this module) hands them the shared singleton. This is what makes
-routes testable: swap a dependency override in tests, no import-time
-side effects to fight with.
-"""
 from functools import lru_cache
 
 from config import get_settings
