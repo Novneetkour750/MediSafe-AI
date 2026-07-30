@@ -1,20 +1,4 @@
-"""
-RegulationService — turns raw search hits into the country-by-country
-results the API/UI actually displays.
 
-Responsibilities:
-    - Apply the "good enough match" threshold.
-    - Attach country flags.
-    - Compute a display confidence percentage.
-    - Resolve "suggest an alternative" (from the CSV's own column, or
-      by finding another allowed medicine for the same country).
-
-Explicitly NOT responsible for:
-    - Running the embedding search itself (SearchService).
-    - Calling the LLM (LLMService).
-    - HTTP concerns — this returns plain dicts, routes wrap them in
-      Pydantic response models.
-"""
 import re
 
 from config import get_settings
