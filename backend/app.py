@@ -1,12 +1,3 @@
-"""
-FastAPI application entrypoint.
-
-Run with:  uvicorn app:app --reload --port 8000  (from the backend/ directory)
-
-This file does exactly three things: create the app, register
-middleware/exception handlers, and mount routers. It never contains
-business logic.
-"""
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
