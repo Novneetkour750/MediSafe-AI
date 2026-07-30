@@ -1,20 +1,4 @@
-"""
-OCRService — reads a medicine name out of a photo.
 
-Responsibilities:
-    - Own the image -> text extraction call (Gemini Vision).
-    - Return a clean string, or None when nothing readable was found.
-
-Explicitly NOT responsible for:
-    - Looking up regulations for the extracted name (MedicineService).
-    - Prompt formatting for anything other than this one OCR task.
-
-Note on the old EasyOCR path (backend/ocr.py in the previous codebase):
-Gemini Vision reads brand names and stylised packaging text far more
-reliably than a general-purpose OCR engine, and it's already the model
-used everywhere else in the app, so EasyOCR added a second dependency
-and a second, worse code path for no benefit. It has been dropped.
-"""
 import io
 
 from PIL import Image
