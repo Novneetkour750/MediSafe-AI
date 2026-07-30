@@ -1,20 +1,3 @@
-"""
-RegulationRepository — the ONLY place in the codebase that touches the
-regulation dataset on disk.
-
-Responsibilities:
-    - Load the CSV once and cache it in memory.
-    - Expose small, honest read methods (distinct medicines, distinct
-      countries, raw dataframe access for the search service).
-
-Explicitly NOT responsible for:
-    - Ranking, scoring, or filtering results by relevance (SearchService).
-    - Formatting data for the API or the UI (RegulationService).
-    - Anything involving embeddings, FAISS, or the LLM.
-
-If the data source ever moves from CSV to Postgres, this is the only
-file that should need to change.
-"""
 from pathlib import Path
 
 import pandas as pd
