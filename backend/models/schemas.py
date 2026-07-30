@@ -1,9 +1,3 @@
-"""
-API contracts. Routes validate against these; services return plain
-dataclasses/dicts that routes adapt into these before responding.
-Keeping schemas separate from services means the API shape can evolve
-without touching business logic, and vice versa.
-"""
 from pydantic import BaseModel, Field
 
 
