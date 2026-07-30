@@ -10,18 +10,6 @@ _LAST_MESSAGE_ANCHOR_ID = "ms-last-message-anchor"
 
 
 def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
-    """Streamlit's chat_input auto-focuses on rerun, which drags the whole
-    page down to the very bottom at a timing we don't control. Racing
-    against that with our own timers is unreliable — Streamlit's scroll can
-    win depending on network/render speed. Instead, we neutralize the
-    browser's native focus-triggered scrolling for a short settle window
-    (by intercepting scrollIntoView while a chat_input textarea has focus),
-    then apply our own explicit target once things have settled:
-
-    - first visit to the page: don't scroll at all, stay at the top.
-    - later renders: scroll only far enough to reveal the last message,
-      not all the way to the bottom of the page.
-    """
     target = "true" if scroll_to_last_message else "false"
     components.html(
         f"""
