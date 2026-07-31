@@ -16,6 +16,7 @@ def init_session_state() -> None:
         "chat_autoquery": None,
         "expanded_alternatives": set(),
         "scan_mode": "text",
+        "scan_show_results": False,
     }
     for key, value in defaults.items():
         if key not in st.session_state:
