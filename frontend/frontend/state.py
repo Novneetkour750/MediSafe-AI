@@ -14,7 +14,6 @@ def init_session_state() -> None:
         ],
         "chat_context": None,
         "chat_autoquery": None,
-        "chat_visited": False,
         "expanded_alternatives": set(),
         "scan_mode": "text",
     }
