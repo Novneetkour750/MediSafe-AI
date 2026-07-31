@@ -51,5 +51,9 @@ def get_countries() -> list[str]:
     return _request("GET", "/api/countries")["countries"]
 
 
+def get_medicines() -> list[str]:
+    return _request("GET", "/api/medicines")["medicines"]
+
+
 def get_stats() -> dict:
     return _request("GET", "/api/stats")
