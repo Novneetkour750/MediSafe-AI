@@ -20,9 +20,7 @@ def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
             var scrollToLastMessage = {target};
             var anchorId = "{_LAST_MESSAGE_ANCHOR_ID}";
 
-            // Neutralize the browser's native "scroll the focused element
-            // into view" behavior for a short window, since that's what
-            // drags the page to the bottom when chat_input auto-focuses.
+        
             var proto = win.HTMLElement.prototype;
             var originalScrollIntoView = proto.scrollIntoView;
             proto.scrollIntoView = function() {{}};
@@ -47,8 +45,7 @@ def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
             setTimeout(function() {{
                 proto.scrollIntoView = originalScrollIntoView;
                 applyTarget();
-                // One more pass shortly after, in case late layout shifts
-                // (e.g. images) moved things slightly.
+                
                 setTimeout(applyTarget, 150);
             }}, 350);
         }})();
@@ -112,11 +109,13 @@ def render_chat() -> None:
     user_query = autoquery or clicked_suggestion or typed
 
     if not user_query:
-        _apply_scroll_behavior(scroll_to_last_message=st.session_state.chat_visited)
-        st.session_state.chat_visited = True
+        # Only the default welcome message present = no real conversation
+        # yet, so no matter how many times this page has been opened, stay
+        # at the top instead of jumping down.
+        has_conversation = len(st.session_state.chat_messages) > 1
+        _apply_scroll_behavior(scroll_to_last_message=has_conversation)
         return
 
-    st.session_state.chat_visited = True
     st.session_state.chat_messages.append({"role": "user", "text": user_query})
 
     with st.spinner("MediSafe AI is typing..."):
