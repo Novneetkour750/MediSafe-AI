@@ -68,6 +68,7 @@ def render_scan() -> None:
                 )
                 if st.button(toggle_icon, key="scan_mode_toggle", help=toggle_help):
                     st.session_state.scan_mode = "text" if st.session_state.scan_mode == "photo" else "photo"
+                    st.session_state.scan_show_results = False
                     st.rerun()
 
             uploaded_file, medicine_input = None, None
@@ -97,7 +98,10 @@ def render_scan() -> None:
 
         analyze = st.button("Analyze Medicine", use_container_width=True, type="primary")
 
-    if not analyze:
+    if analyze:
+        st.session_state.scan_show_results = True
+
+    if not st.session_state.get("scan_show_results"):
         _render_how_it_works()
         return
 
