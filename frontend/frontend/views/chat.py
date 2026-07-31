@@ -7,9 +7,11 @@ from config import BOT_AVATAR
 AI_UNAVAILABLE_MESSAGE = "MediSafe AI couldn't process that question right now. Please try again in a moment."
 
 _LAST_MESSAGE_ANCHOR_ID = "ms-last-message-anchor"
+_CHAT_BOX_HEIGHT = 460
 
 
 def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
+
     target = "true" if scroll_to_last_message else "false"
     components.html(
         f"""
@@ -19,35 +21,32 @@ def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
             var win = window.parent;
             var scrollToLastMessage = {target};
             var anchorId = "{_LAST_MESSAGE_ANCHOR_ID}";
+            var expectedHeight = {_CHAT_BOX_HEIGHT};
+            var tolerance = 60;
 
-        
-            var proto = win.HTMLElement.prototype;
-            var originalScrollIntoView = proto.scrollIntoView;
-            proto.scrollIntoView = function() {{}};
-
-            function applyTarget() {{
-                var ta = doc.querySelector('[data-testid="stChatInput"] textarea');
-                if (ta && doc.activeElement === ta) {{ ta.blur(); }}
-
-                if (scrollToLastMessage) {{
-                    var el = doc.getElementById(anchorId);
-                    if (el) {{
-                        var rect = el.getBoundingClientRect();
-                        win.scrollBy(0, rect.bottom - win.innerHeight + 16);
+            function findChatBox(el) {{
+                var node = el ? el.parentElement : null;
+                while (node && node !== doc.body) {{
+                    var style = win.getComputedStyle(node);
+                    var isScrollable = (style.overflowY === "auto" || style.overflowY === "scroll");
+                    if (isScrollable && Math.abs(node.clientHeight - expectedHeight) <= tolerance) {{
+                        return node;
                     }}
-                }} else {{
-                    win.scrollTo(0, 0);
-                    var container = doc.querySelector('[data-testid="stAppViewContainer"]');
-                    if (container) {{ container.scrollTop = 0; }}
+                    node = node.parentElement;
                 }}
+                return null;
             }}
 
-            setTimeout(function() {{
-                proto.scrollIntoView = originalScrollIntoView;
-                applyTarget();
-                
-                setTimeout(applyTarget, 150);
-            }}, 350);
+            function applyTarget() {{
+                var anchor = doc.getElementById(anchorId);
+                var box = findChatBox(anchor);
+                if (!box) {{ return; }}
+                box.scrollTop = scrollToLastMessage ? box.scrollHeight : 0;
+            }}
+
+            applyTarget();
+            setTimeout(applyTarget, 100);
+            setTimeout(applyTarget, 400);
         }})();
         </script>
         """,
@@ -78,7 +77,7 @@ def render_chat() -> None:
             st.session_state.chat_context = None
             st.rerun()
 
-    with st.container(key="ms_chat_card"):
+    with st.container(key="ms_chat_card", height=_CHAT_BOX_HEIGHT):
         for msg in st.session_state.chat_messages:
             if msg["role"] == "system":
                 st.markdown(f'<div class="ms-chat-system-notice">🔒 {msg["text"]}</div>', unsafe_allow_html=True)
@@ -109,9 +108,6 @@ def render_chat() -> None:
     user_query = autoquery or clicked_suggestion or typed
 
     if not user_query:
-        # Only the default welcome message present = no real conversation
-        # yet, so no matter how many times this page has been opened, stay
-        # at the top instead of jumping down.
         has_conversation = len(st.session_state.chat_messages) > 1
         _apply_scroll_behavior(scroll_to_last_message=has_conversation)
         return
