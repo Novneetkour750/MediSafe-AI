@@ -45,7 +45,7 @@ def _get_medicine_options() -> list[str]:
         try:
             st.session_state.medicine_options = sorted(api_client.get_medicines())
         except api_client.ApiError:
-            st.session_state.medicine_options = []
+            return []
     return st.session_state.medicine_options
 
 
@@ -77,13 +77,19 @@ def render_scan() -> None:
                         "Upload Medicine Image", type=["png", "jpg", "jpeg"], label_visibility="collapsed"
                     )
                 else:
-                    medicine_input = st.selectbox(
-                        "Search Medicine",
-                        options=_get_medicine_options(),
-                        index=None,
-                        placeholder="Type a medicine name...",
-                        label_visibility="collapsed",
-                    )
+                    medicine_options = _get_medicine_options()
+                    if medicine_options:
+                        medicine_input = st.selectbox(
+                            "Search Medicine",
+                            options=medicine_options,
+                            index=None,
+                            placeholder="Type a medicine name...",
+                            label_visibility="collapsed",
+                        )
+                    else:
+                        medicine_input = st.text_input(
+                            "Search Medicine", placeholder="Type a medicine name...", label_visibility="collapsed"
+                        )
 
         country_options = _get_country_options()
         selected_country = st.selectbox("Destination country", country_options, key="scan_destination_country")
