@@ -16,6 +16,8 @@ class RegulationRepository:
     def _load(self) -> pd.DataFrame:
         log.info("Loading regulation dataset from %s", self._csv_path)
         df = pd.read_csv(self._csv_path)
+        
+        df = df.fillna("")
         log.info("Loaded %d regulation records", len(df))
         return df
 
@@ -43,9 +45,7 @@ class RegulationRepository:
         }
 
 
-# Module-level singleton, created once at import time and reused by every
-# service — mirrors how the dataframe was shared in the original app,
-# but now behind one explicit accessor instead of a scattered `df = get_dataframe()`.
+
 _repository: RegulationRepository | None = None
 
 
