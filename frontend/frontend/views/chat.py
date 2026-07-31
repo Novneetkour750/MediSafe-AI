@@ -8,10 +8,11 @@ AI_UNAVAILABLE_MESSAGE = "MediSafe AI couldn't process that question right now. 
 
 _LAST_MESSAGE_ANCHOR_ID = "ms-last-message-anchor"
 _CHAT_BOX_HEIGHT = 460
+_MIN_MESSAGES_FOR_SCROLL_BOX = 5
 
 
 def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
-
+    
     target = "true" if scroll_to_last_message else "false"
     components.html(
         f"""
@@ -44,6 +45,7 @@ def _apply_scroll_behavior(scroll_to_last_message: bool) -> None:
                 box.scrollTop = scrollToLastMessage ? box.scrollHeight : 0;
             }}
 
+            
             applyTarget();
             setTimeout(applyTarget, 100);
             setTimeout(applyTarget, 400);
@@ -77,7 +79,11 @@ def render_chat() -> None:
             st.session_state.chat_context = None
             st.rerun()
 
-    with st.container(key="ms_chat_card", height=_CHAT_BOX_HEIGHT):
+    chat_box_kwargs = {"key": "ms_chat_card"}
+    if len(st.session_state.chat_messages) >= _MIN_MESSAGES_FOR_SCROLL_BOX:
+        chat_box_kwargs["height"] = _CHAT_BOX_HEIGHT
+
+    with st.container(**chat_box_kwargs):
         for msg in st.session_state.chat_messages:
             if msg["role"] == "system":
                 st.markdown(f'<div class="ms-chat-system-notice">🔒 {msg["text"]}</div>', unsafe_allow_html=True)
@@ -108,6 +114,7 @@ def render_chat() -> None:
     user_query = autoquery or clicked_suggestion or typed
 
     if not user_query:
+        
         has_conversation = len(st.session_state.chat_messages) > 1
         _apply_scroll_behavior(scroll_to_last_message=has_conversation)
         return
