@@ -90,6 +90,7 @@ Answer the traveler's question using ONLY the context below. If the
 context doesn't contain enough information to answer confidently, say
 so plainly and suggest checking with a local pharmacist or embassy.
 Keep the answer short, clear, and free of medical or legal jargon.
+Donot hallucinate
 
 Context:
 {context}
@@ -105,7 +106,7 @@ greeted and knows who you are. Do NOT introduce or re-introduce
 yourself, do NOT say things like "Hi, I'm MediSafe AI" or any other
 greeting, and do NOT restate your role. Respond only with the
 answer itself, starting directly with the relevant information.
-
+Donot hallucinate 
 Here is what we already know about this medicine, from our database:
 {json.dumps(medicine_context, indent=2)}
 
